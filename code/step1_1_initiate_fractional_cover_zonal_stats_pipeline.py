@@ -770,7 +770,7 @@ def main_routine():
     # step1_11_seasonal_fpca2_zonal_stats.main_routine(
     #     export_dir_path, 'fpca2', fpca2_export_csv, temp_dir_path, geo_df2, no_data)
 
-    # # ------------------------------------------------ dbi 6 bands ---------------------------------------------------
+    # # ------------------------------------------------ dbi 6 bands think working -------------------------------------
     #
     dbi_zonal_stats_output = os.path.join(export_dir_path, 'dbi_zonal_stats')
     print('dbi zonal_stats_output: ', dbi_zonal_stats_output)
@@ -784,63 +784,63 @@ def main_routine():
 
     # # ------------------------------------------------ dim 3 bands working -------------------------------------
     #
-    # dim_zonal_stats_output = os.path.join(export_dir_path, 'dim_zonal_stats')
-    # print('dim zonal_stats_output: ', dim_zonal_stats_output)
-    #
-    # # no data for persistent green is 0
-    # no_data = 0
-    #
-    # import step1_13_seasonal_dim_zonal_stats
-    # step1_13_seasonal_dim_zonal_stats.main_routine(
-    #     export_dir_path, 'dim', dim_export_csv, temp_dir_path, geo_df2, no_data)
+    dim_zonal_stats_output = os.path.join(export_dir_path, 'dim_zonal_stats')
+    print('dim zonal_stats_output: ', dim_zonal_stats_output)
+
+    # no data for persistent green is 0
+    no_data = 0
+
+    import step1_13_seasonal_dim_zonal_stats
+    step1_13_seasonal_dim_zonal_stats.main_routine(
+        export_dir_path, 'dim', dim_export_csv, temp_dir_path, geo_df2, no_data)
     #
     # # ------------------------------------------------ dis classified working ----------------------------------------
     #
-    # dis_zonal_stats_output = os.path.join(export_dir_path, 'dis_zonal_stats')
-    # print('dis zonal_stats_output: ', dis_zonal_stats_output)
-    #
-    # # no data for persistent green is 0
-    # no_data = 255
-    #
-    # import step1_14_seasonal_dis_zonal_stats
-    # step1_14_seasonal_dis_zonal_stats.main_routine(
-    #     export_dir_path, 'dis', dis_export_csv, temp_dir_path, geo_df2, no_data)
+    dis_zonal_stats_output = os.path.join(export_dir_path, 'dis_zonal_stats')
+    print('dis zonal_stats_output: ', dis_zonal_stats_output)
+
+    # no data for persistent green is 0
+    no_data = 255
+
+    import step1_14_seasonal_dis_zonal_stats
+    step1_14_seasonal_dis_zonal_stats.main_routine(
+        export_dir_path, 'dis', dis_export_csv, temp_dir_path, geo_df2, no_data)
     # #
     # # # ------------------------------------------------ dja not classified working ----------------------------------
     #
-    # dja_zonal_stats_output = os.path.join(export_dir_path, 'dja_zonal_stats')
-    # print('dja zonal_stats_output: ', dja_zonal_stats_output)
-    #
-    # # no data for persistent green is 0
-    # no_data = 0
-    #
-    # import step1_15_seasonal_dja_zonal_stats
-    # step1_15_seasonal_dja_zonal_stats.main_routine(
-    #     export_dir_path, 'dja', dja_export_csv, temp_dir_path, geo_df2, no_data)
+    dja_zonal_stats_output = os.path.join(export_dir_path, 'dja_zonal_stats')
+    print('dja zonal_stats_output: ', dja_zonal_stats_output)
+
+    # no data for persistent green is 0
+    no_data = 0
+
+    import step1_15_seasonal_dja_zonal_stats
+    step1_15_seasonal_dja_zonal_stats.main_routine(
+        export_dir_path, 'dja', dja_export_csv, temp_dir_path, geo_df2, no_data)
     #
     # # # ------------------------------------------------ dka classified working --------------------------------------
     # #
-    # dka_zonal_stats_output = os.path.join(export_dir_path, 'dka_zonal_stats')
-    # print('dka zonal_stats_output: ', dka_zonal_stats_output)
-    #
-    # # no data for persistent green is 0
-    # no_data = 255
-    #
-    # import step1_16_seasonal_dka_zonal_stats2
-    # step1_16_seasonal_dka_zonal_stats2.main_routine(
-    #     export_dir_path, 'dka', dka_export_csv, temp_dir_path, geo_df2, no_data)
+    dka_zonal_stats_output = os.path.join(export_dir_path, 'dka_zonal_stats')
+    print('dka zonal_stats_output: ', dka_zonal_stats_output)
+
+    # no data for persistent green is 0
+    no_data = 255
+
+    import step1_16_seasonal_dka_zonal_stats2
+    step1_16_seasonal_dka_zonal_stats2.main_routine(
+        export_dir_path, 'dka', dka_export_csv, temp_dir_path, geo_df2, no_data)
     # #
     # # # ------------------------------------------------ stc classified working --------------------------------------
     # #
-    # stc_zonal_stats_output = os.path.join(export_dir_path, 'stc_zonal_stats')
-    # print('stc zonal_stats_output: ', stc_zonal_stats_output)
-    #
-    # # no data for persistent green is 0
-    # no_data = 0
-    #
-    # import step1_17_seasonal_stc_zonal_stats
-    # step1_17_seasonal_stc_zonal_stats.main_routine(
-    #     export_dir_path, 'stc', stc_export_csv, temp_dir_path, geo_df2, no_data)
+    stc_zonal_stats_output = os.path.join(export_dir_path, 'stc_zonal_stats')
+    print('stc zonal_stats_output: ', stc_zonal_stats_output)
+
+    # no data for persistent green is 0
+    no_data = 0
+
+    import step1_17_seasonal_stc_zonal_stats
+    step1_17_seasonal_stc_zonal_stats.main_routine(
+        export_dir_path, 'stc', stc_export_csv, temp_dir_path, geo_df2, no_data)
     #
 
 

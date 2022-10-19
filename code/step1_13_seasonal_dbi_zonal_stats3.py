@@ -498,7 +498,7 @@ def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_
 
     # reshape the final dataframe
     output_zonal_stats = output_zonal_stats[
-        ['uid', 'site', 'dbi_image', 's_day', 's_month', 's_year', 's_date', 'e_day', 'e_month', 'e_year', 'e_date',
+        ['uid', 'site', 'image', 's_day', 's_month', 's_year', 's_date', 'e_day', 'e_month', 'e_year', 'e_date',
          'b1_dbi_count', 'b1_dbi_min',
          'b1_dbi_max', 'b1_dbi_mean', 'b1_dbi_med', 'b1_dbi_std',
          'b1_dbi_p25', 'b1_dbi_p50', 'b1_dbi_p75', 'b1_dbi_p95', 'b1_dbi_p99', 'b1_dbi_range',
