@@ -4,17 +4,17 @@
 Fractional cover zonal statistics pipeline
 ==========================================
 
-Description: This pipeline comprises of 12 scripts which read in the Rangeland Monitoring Branch odk instances
-{instance names, odk_output.csv and ras_odk_output.csv: format, .csv: location, directory}
-Outputs are files to a temporary directory located in your working directory (deleted at script completion),
-or to an export directory located a the location specified by command argument (--export_dir).
-Final outputs are files to their respective property sub-directories within the Pastoral_Districts directory located in
-the Rangeland Working Directory.
+Description: This pipeline comprises of 11 scripts which read in the AGB biomass csv. Pipeline converts data to
+geo-dataframe and created a 1ha polygon (site) for each point. Once this is complete the pipeline runs zonal statistics
+on the current Landsat mosaic and exports a csv per site into an outputs directory. Note, seasonal composites can be
+6 band, 3 band, greyscale and classified.
+Once pipeline is complete a temporary directory which was created will be deleted from the working drive, if script fails
+the temporary directory requires manual deletion.
 
 
 step1_1_initiate_fractional_cover_zonal_stats_pipeline.py
 ===============================
-Description: This script initiates the Fractional cover zonal statistics pipeline.
+Description: This script initiates the NT Mosaic biomass zonal pipeline.
 This script:
 
 1. Imports and passes the command line arguments.
@@ -28,7 +28,7 @@ This script:
 
 Author: Rob McGregor
 email: Robert.Mcgregor@nt.gov.au
-Date: 27/10/2020
+Date: 30/10/2022
 Version: 1.0
 
 ###############################################################################################
@@ -129,15 +129,15 @@ def get_cmd_args_fn():
                    help='Enter the export directory for all of the final outputs.',
                    default=r'Z:\Scratch\Zonal_Stats_Pipeline\non_rmb_fractional_cover_zonal_stats\outputs')
 
-    p.add_argument('-i', '--image_count', type=int,
-                   help='Enter the minimum amount of Landsat images required per tile as an integer (i.e. 950).',
-                   default=100)
+    # p.add_argument('-i', '--image_count', type=int,
+    #                help='Enter the minimum amount of Landsat images required per tile as an integer (i.e. 950).',
+    #                default=5)
 
     p.add_argument('-l', '--mosaics_dir', help="The NT seasonal mosaics directory path",
                    default=r"Z:\Landsat\mosaics")
 
-    p.add_argument('-n', '--no_data', help="Enter the Landsat Fractional Cover no data value (i.e. 0)",
-                   default=0)
+    # p.add_argument('-n', '--no_data', help="Enter the Landsat Fractional Cover no data value (i.e. 0)",
+    #                default=0)
 
 
     cmd_args = p.parse_args()
@@ -257,131 +257,6 @@ def export_dir_folders_fn(export_dir_path):
     @return rainfall_output_dir:
     """
 
-    # rainfall_output_dir = (export_dir_path + '\\rainfall')
-    # os.mkdir(rainfall_output_dir)
-
-    # dil_tile_status_dir = (export_dir_path + '\\dil_tile_status')
-    # os.mkdir(dil_tile_status_dir)
-    # #
-    # ref_tile_status_dir = (export_dir_path + '\\ref_tile_status')
-    # os.mkdir(ref_tile_status_dir)
-    #
-    # dbg_tile_status_dir = (export_dir_path + '\\dbg_tile_status')
-    # os.mkdir(dbg_tile_status_dir)
-    #
-    # th_tile_status_dir = (export_dir_path + '\\th_tile_status')
-    # os.mkdir(th_tile_status_dir)
-    #
-    # pg_tile_status_dir = (export_dir_path + '\\pg_tile_status')
-    # os.mkdir(pg_tile_status_dir)
-    #
-    # dp0_tile_status_dir = (export_dir_path + '\\dp0_tile_status')
-    # os.mkdir(dp0_tile_status_dir)
-    #
-    # dp1_tile_status_dir = (export_dir_path + '\\dp1_tile_status')
-    # os.mkdir(dp1_tile_status_dir)
-
-    # # ----------------------------------------------------------------------
-    #
-    # dil_tile_for_processing_dir = (dil_tile_status_dir + '\\dil_for_processing')
-    # os.mkdir(dil_tile_for_processing_dir)
-    # #
-    # ref_tile_for_processing_dir = (ref_tile_status_dir + '\\ref_for_processing')
-    # os.mkdir(ref_tile_for_processing_dir)
-    # #
-    #
-    # dbg_tile_for_processing_dir = (dbg_tile_status_dir + '\\dbg_for_processing')
-    # os.mkdir(dbg_tile_for_processing_dir)
-
-    # th_tile_for_processing_dir = (th_tile_status_dir + '\\th_for_processing')
-    # os.mkdir(th_tile_for_processing_dir)
-    #
-    # pg_tile_for_processing_dir = (pg_tile_status_dir + '\\pg_for_processing')
-    # os.mkdir(pg_tile_for_processing_dir)
-    #
-    # dp0_tile_for_processing_dir = (dp0_tile_status_dir + '\\dp0_for_processing')
-    # os.mkdir(dp0_tile_for_processing_dir)
-    # #
-    #
-    # dp1_tile_for_processing_dir = (dp1_tile_status_dir + '\\dp1_for_processing')
-    # os.mkdir(dp1_tile_for_processing_dir)
-
-    # # -----------------------------------------------------------------------
-    #
-    # dil_insuf_files_dir = (dil_tile_status_dir + '\\dil_insufficient_files')
-    # os.mkdir(dil_insuf_files_dir)
-    # #
-    # ref_insuf_files_dir = (ref_tile_status_dir + '\\ref_insufficient_files')
-    # os.mkdir(ref_insuf_files_dir)
-    #
-    # dbg_insuf_files_dir = (dbg_tile_status_dir + '\\dbg_insufficient_files')
-    # os.mkdir(dbg_insuf_files_dir)
-    # #
-    # th_insuf_files_dir = (th_tile_status_dir + '\\th_insufficient_files')
-    # os.mkdir(th_insuf_files_dir)
-    #
-    # pg_insuf_files_dir = (pg_tile_status_dir + '\\pg_insufficient_files')
-    # os.mkdir(pg_insuf_files_dir)
-    #
-    # dp0_insuf_files_dir = (dp0_tile_status_dir + '\\dp0_insufficient_files')
-    # os.mkdir(dp0_insuf_files_dir)
-    #
-    # dp1_insuf_files_dir = (dp1_tile_status_dir + '\\dp1_insufficient_files')
-    # os.mkdir(dp1_insuf_files_dir)
-    # #
-    # # ------------------------------------------------------------------------
-    # #
-    # dil_stat_list_dir = dil_tile_status_dir + '\\dil_tile_status_lists'
-    # os.mkdir(dil_stat_list_dir)
-    # #
-    # ref_stat_list_dir = ref_tile_status_dir + '\\ref_tile_status_lists'
-    # os.mkdir(ref_stat_list_dir)
-    #
-    # dbg_stat_list_dir = dbg_tile_status_dir + '\\dbg_tile_status_lists'
-    # os.mkdir(dbg_stat_list_dir)
-    # #
-    # # th_stat_list_dir = th_tile_status_dir + '\\th_tile_status_lists'
-    # # os.mkdir(th_stat_list_dir)
-    # #
-    # # pg_stat_list_dir = pg_tile_status_dir + '\\pg_tile_status_lists'
-    # # os.mkdir(pg_stat_list_dir)
-    # #
-    # dp0_stat_list_dir = dp0_tile_status_dir + '\\dp0_tile_status_lists'
-    # os.mkdir(dp0_stat_list_dir)
-    # #
-    #
-    # dp1_stat_list_dir = dp1_tile_status_dir + '\\dp1_tile_status_lists'
-    # os.mkdir(dp1_stat_list_dir)
-
-    # # -------------------------------------------------------------------------
-    #
-    # plot_dir = export_dir_path + '\\plots'
-    # os.mkdir(plot_dir)
-    #
-    # interactive_outputs = plot_dir + '\\interactive'
-    # os.mkdir(interactive_outputs)
-    #
-    # final_plot_outputs = export_dir_path + '\\final_plots'
-    # os.mkdir(final_plot_outputs)
-    #
-    # final_interactive_outputs = export_dir_path + '\\final_interactive'
-    # os.mkdir(final_interactive_outputs)
-    #
-    # dil_zonal_stats_output_dir = (export_dir_path + '\\dil_zonal_stats')
-    # os.mkdir(dil_zonal_stats_output_dir)
-    #
-    # ref_zonal_stats_output_dir = (export_dir_path + '\\ref_zonal_stats')
-    # os.mkdir(ref_zonal_stats_output_dir)
-    #
-    # dbg_zonal_stats_output_dir = (export_dir_path + '\\dbg_zonal_stats')
-    # os.mkdir(dbg_zonal_stats_output_dir)
-    # #
-    # th_zonal_stats_output_dir = (export_dir_path + '\\th_zonal_stats')
-    # os.mkdir(th_zonal_stats_output_dir)
-    #
-    # pg_zonal_stats_output_dir = (export_dir_path + '\\pg_zonal_stats')
-    # os.mkdir(pg_zonal_stats_output_dir)
-    #
     h99a2_zonal_stats_output_dir = (export_dir_path + '\\h99a2_zonal_stats')
     print("h99a2_zonal_stats_output_dir: ", h99a2_zonal_stats_output_dir)
     os.mkdir(h99a2_zonal_stats_output_dir)
@@ -438,8 +313,8 @@ def main_routine():
     data = cmd_args.data
     export_dir = cmd_args.export_dir
     mosaics_dir = cmd_args.mosaics_dir
-    no_data = int(cmd_args.no_data)
-    image_count = int(cmd_args.image_count)
+    # no_data = int(cmd_args.no_data)
+    #image_count = int(cmd_args.image_count)
 
     # call the temporaryDir function.
     temp_dir_path, final_user = temporary_dir_fn()

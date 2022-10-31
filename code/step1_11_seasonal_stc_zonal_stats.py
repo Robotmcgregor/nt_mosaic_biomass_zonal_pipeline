@@ -16,21 +16,16 @@ import shutil
 warnings.filterwarnings("ignore")
 
 '''
-step1_7_monthly_max_temp_zonal_stats.py
+step1_11_seasonal_stc_zonal_stats.py
 ============================
 
-Read in max_temp raster images from QLD silo and a polygon shapefile and perform zonal statistic analysis on a list of 
-imagery. It returns a csv file containing the statistics for the input zones.
-
-Author: Grant Staben
-email: grant.staben@nt.gov.au
-Date: 21/09/2020
-version: 1.0
+Read in stcLandsat mosaics and extract zonal statistics for each 1ha plot.
+Returns a csv file containing the statistics for each site for all files located within the specified directory.
 
 Modified: Rob McGregor
 email: robert.mcgregor@nt.gov.au
-Date: 2/11/2020
-version 2.0
+Date: 25/10/2022
+version 1.0
 
 
 ###############################################################################################
@@ -348,7 +343,7 @@ def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_
     export_dir_path, zonal_stats_ready_dir, fpc_output_zonal_stats, fpc_complete_tile, i, csv_file, temp_dir_path, qld_dict"""
 
     print("Mosaic stc zonal stats beginning .........")
-    print("no_data: ", no_data, " - should be 0")
+    print("no_data: ", no_data)
 
     uid = 'uid'
     output_list = []

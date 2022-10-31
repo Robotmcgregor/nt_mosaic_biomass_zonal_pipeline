@@ -17,7 +17,7 @@ warnings.filterwarnings("ignore")
 step1_5_seasonal_fpca2_zonal_stats.py
 ============================
 
-Read in dbi Landsat mosaics and extract zonal statistics for each 1ha plot.
+Read in fpca2 Landsat mosaics and extract zonal statistics for each 1ha plot.
 Returns a csv file containing the statistics for each site for all files located within the specified directory.
 
 Modified: Rob McGregor

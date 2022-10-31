@@ -17,7 +17,7 @@ warnings.filterwarnings("ignore")
 step1_4_seasonal_h99a2_zonal_stats.py
 ============================
 
-Read in dbi Landsat mosaics and extract zonal statistics for each 1ha plot.
+Read in h99a2 Landsat mosaics and extract zonal statistics for each 1ha plot.
 Returns a csv file containing the statistics for each site for all files located within the specified directory.
 
 Modified: Rob McGregor
@@ -160,15 +160,6 @@ def apply_zonal_stats_fn(image_s, projected_shape_path, uid, variable, no_data):
                 im_date = image_name_split[-2]
 
             print("im_date: ", im_date)
-
-
-            # list_a = str(srci).rsplit('\\')
-            # # print("list_a: ", list_a)
-            # file_name = list_a[-1]
-            # # print("file_name: ", file_name)
-            # list_b = file_name.rsplit("'")
-            # file_name_final = list_b[0]
-            # img_date = file_name_final[1:9]
 
             for zone in zs:
                 zone_stats = zone
