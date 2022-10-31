@@ -2,28 +2,23 @@
 
 
 '''
-step1_7_monthly_max_temp_zonal_stats.py
+step1_6_seasonal_dbi_zonal_stats.py
 ============================
 
-Read in max_temp raster images from QLD silo and a polygon shapefile and perform zonal statistic analysis on a list of 
-imagery. It returns a csv file containing the statistics for the input zones.
-
-Author: Grant Staben
-email: grant.staben@nt.gov.au
-Date: 21/09/2020
-version: 1.0
+Read in dbi Landsat mosaics and extract zonal statistics for each 1ha plot.
+Returns a csv file containing the statistics for each site for all files located within the specified directory.
 
 Modified: Rob McGregor
 email: robert.mcgregor@nt.gov.au
-Date: 2/11/2020
-version 2.0
+Date: 25/10/2022
+version 1.0
 
 
 ###############################################################################################
 
 MIT License
 
-Copyright (c) 2020 Rob McGregor
+Copyright (c) 2022 Rob McGregor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the 'Software'), to deal
@@ -47,7 +42,6 @@ SOFTWARE.
 
 ========================================================================================================
 '''
-
 
 # import modules
 from __future__ import print_function, division
@@ -75,8 +69,8 @@ def landsat_correction_fn(output_zonal_stats, num_bands):
     """
 
     for i in num_bands:
-
-        output_zonal_stats['b{0}_dbi_min'.format(str(i))] = output_zonal_stats['b{0}_dbi_min'.format(str(i))].replace(0, np.nan)
+        output_zonal_stats['b{0}_dbi_min'.format(str(i))] = output_zonal_stats['b{0}_dbi_min'.format(str(i))].replace(0,
+                                                                                                                      np.nan)
 
         output_zonal_stats['b{0}_dbi_min'.format(i)] = output_zonal_stats['b{0}_dbi_min'.format(i)] - 100
         output_zonal_stats['b{0}_dbi_max'.format(i)] = output_zonal_stats['b{0}_dbi_max'.format(i)] - 100
@@ -87,8 +81,7 @@ def landsat_correction_fn(output_zonal_stats, num_bands):
         output_zonal_stats['b{0}_dbi_p75'.format(i)] = output_zonal_stats['b{0}_dbi_p75'.format(i)] - 100
         output_zonal_stats['b{0}_dbi_p95'.format(i)] = output_zonal_stats['b{0}_dbi_p95'.format(i)] - 100
         output_zonal_stats['b{0}_dbi_p99'.format(i)] = output_zonal_stats['b{0}_dbi_p99'.format(i)] - 100
-        #output_zonal_stats['b{0}_dbi_range'.format(i)] = output_zonal_stats['b{0}_dbi_range'.format(i)] - 100
-
+        # output_zonal_stats['b{0}_dbi_range'.format(i)] = output_zonal_stats['b{0}_dbi_range'.format(i)] - 100
 
 
 def time_stamp_fn(output_zonal_stats):
@@ -205,7 +198,7 @@ def apply_zonal_stats_fn(image_s, projected_shape_path, uid, variable, no_data, 
         array = srci.read(band)
 
         # remove 100 from all values
-        #array = array - 100
+        # array = array - 100
 
         with fiona.open(projected_shape_path) as src:
 
@@ -270,6 +263,8 @@ def apply_zonal_stats_fn(image_s, projected_shape_path, uid, variable, no_data, 
         print("list_site: ", list_site)
         print("str(site_[0]): ", str(site_[0]))
         return final_results, str(site_[0])
+
+
 #
 #
 # def clean_data_frame_fn(output_list, output_dir, var_):
@@ -343,7 +338,6 @@ def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_
     os.makedirs(dbi_temp_dir_bands)
 
     for i in num_bands:
-
         band_dir = os.path.join(dbi_temp_dir_bands, 'band{0}'.format(str(i)))
         os.makedirs(band_dir)
 
@@ -380,13 +374,6 @@ def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_
                     final_results, site = apply_zonal_stats_fn(image_s, projected_shape_path, uid, variable,
                                                                no_data, band)
 
-                    # header = ["b" + str(band) + '_uid', "b" + str(band) + '_site', "b" + str(band) + '_count',
-                    #           "b" + str(band) + '_min', "b" + str(band) + '_max',
-                    #           "b" + str(band) + '_mean', "b" + str(band) + '_median', "b" + str(band) + '_std',
-                    #           "b" + str(band) + '_p25', "b" + str(band) + '_p50', "b" + str(band) + '_p75',
-                    #           "b" + str(band) + '_p95', "b" + str(band) + '_p99', "b" + str(band) + '_range']
-                    #
-
                     header = ["b" + str(band) + '_uid', "b" + str(band) + '_site', "b" + str(band) + '_min',
                               "b" + str(band) + '_max', "b" + str(band) + '_mean', "b" + str(band) + '_count',
                               "b" + str(band) + '_std', "b" + str(band) + '_median', "b" + str(band) + '_range',
@@ -402,7 +389,6 @@ def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_
                     # df.to_csv(dbi_temp_dir_bands + '//band' + str(band) + '//' + image_results, index=False)
 
                     print("exported to: ", os.path.join(dbi_temp_dir_bands, "band{0}".format(str(band)), image_results))
-
 
     print("concat values in temp")
     for x in num_bands:
@@ -446,7 +432,7 @@ def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_
     #               'b6_dbi_med', 'b6_dbi_std', 'b6_dbi_p25', 'b6_dbi_p50', 'b6_dbi_p75', 'b6_dbi_p95', 'b6_dbi_p99',
     #               'b6_dbi_range', 'b6_dbi_band', 'b6_dbi_im', 'b6_dbi_date'
     #               ]
-    
+
     header_all = ['uid', 'site', 'b1_dbi_min', 'b1_dbi_max', 'b1_dbi_mean', 'b1_dbi_count',
                   'b1_dbi_std', 'b1_dbi_med', 'b1_dbi_range', 'b1_dbi_p25', 'b1_dbi_p50', 'b1_dbi_p75',
                   'b1_dbi_p95', 'b1_dbi_p99', 'band', 'image', 'date',
@@ -471,8 +457,6 @@ def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_
                   'b6_dbi_count', 'b6_dbi_std', 'b6_dbi_med', 'b6_dbi_range', 'b6_dbi_p25', 'b6_dbi_p50', 'b6_dbi_p75',
                   'b6_dbi_p95', 'b6_dbi_p99', 'band3', 'image3', 'date3'
                   ]
-    
-    
 
     all_files = glob(os.path.join(dbi_temp_dir_bands,
                                   '*.csv'))
@@ -482,11 +466,11 @@ def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_
     print("-" * 50)
     print(output_zonal_stats.shape)
     print(output_zonal_stats.columns)
-    output_zonal_stats.to_csv(
-        r"Z:\Scratch\Zonal_Stats_Pipeline\non_rmb_fractional_cover_zonal_stats\six_band_test.csv")
+    # output_zonal_stats.to_csv(
+    #     r"Z:\Scratch\Zonal_Stats_Pipeline\non_rmb_fractional_cover_zonal_stats\six_band_test.csv")
     output_zonal_stats.columns = header_all
-    output_zonal_stats.to_csv(
-        r"Z:\Scratch\Zonal_Stats_Pipeline\non_rmb_fractional_cover_zonal_stats\six_band_test2.csv")
+    # output_zonal_stats.to_csv(
+    #     r"Z:\Scratch\Zonal_Stats_Pipeline\non_rmb_fractional_cover_zonal_stats\six_band_test2.csv")
 
     # -------------------------------------------------- Clean dataframe -----------------------------------------------
     # output_zonal_stats.to_csv(r"Z:\Scratch\Rob\output_zonal_stats2.csv")
@@ -523,7 +507,8 @@ def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_
         for i in site_list:
             out_df = output_zonal_stats[output_zonal_stats['site'] == i]
 
-            out_path = os.path.join(export_dir_path, "{0}_zonal_stats".format(variable), "{0}_dbi_zonal_stats.csv".format(str(i)))
+            out_path = os.path.join(export_dir_path, "{0}_zonal_stats".format(variable),
+                                    "{0}_dbi_zonal_stats.csv".format(str(i)))
             print("export to: ", out_path)
             # export the pandas df to a csv file
             out_df.to_csv(out_path, index=False)

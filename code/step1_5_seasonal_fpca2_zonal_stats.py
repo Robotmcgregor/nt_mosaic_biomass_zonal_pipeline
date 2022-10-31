@@ -9,32 +9,28 @@ import geopandas as gpd
 import warnings
 import os
 from glob import glob
+import numpy as np
 
 warnings.filterwarnings("ignore")
 
 '''
-step1_7_monthly_max_temp_zonal_stats.py
+step1_5_seasonal_fpca2_zonal_stats.py
 ============================
 
-Read in max_temp raster images from QLD silo and a polygon shapefile and perform zonal statistic analysis on a list of 
-imagery. It returns a csv file containing the statistics for the input zones.
-
-Author: Grant Staben
-email: grant.staben@nt.gov.au
-Date: 21/09/2020
-version: 1.0
+Read in dbi Landsat mosaics and extract zonal statistics for each 1ha plot.
+Returns a csv file containing the statistics for each site for all files located within the specified directory.
 
 Modified: Rob McGregor
 email: robert.mcgregor@nt.gov.au
-Date: 2/11/2020
-version 2.0
+Date: 25/10/2022
+version 1.0
 
 
 ###############################################################################################
 
 MIT License
 
-Copyright (c) 2020 Rob McGregor
+Copyright (c) 2022 Rob McGregor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the 'Software'), to deal
@@ -58,6 +54,33 @@ SOFTWARE.
 
 ========================================================================================================
 '''
+
+
+def landsat_correction_fn(output_zonal_stats, num_bands):
+    """ Replace specific 0 values with Null values and correct b1, b2 and b3 calculations
+    (refer to Fractional Cover metadata)
+
+    @param output_zonal_stats: dataframe object containing the Landsat tile Fractional Cover zonal stats.
+    @return: processed dataframe object containing the Landsat tile Fractional Cover zonal stats and
+    updated values.
+    """
+
+    for i in num_bands:
+        output_zonal_stats['b{0}_fpca2_min'.format(str(i))] = output_zonal_stats[
+            'b{0}_fpca2_min'.format(str(i))].replace(0, np.nan)
+
+        output_zonal_stats['b{0}_fpca2_min'.format(i)] = output_zonal_stats['b{0}_fpca2_min'.format(i)]  # - 100
+        output_zonal_stats['b{0}_fpca2_max'.format(i)] = output_zonal_stats['b{0}_fpca2_max'.format(i)]  # - 100
+        output_zonal_stats['b{0}_fpca2_mean'.format(i)] = output_zonal_stats['b{0}_fpca2_mean'.format(i)]  # - 100
+        output_zonal_stats['b{0}_fpca2_med'.format(i)] = output_zonal_stats['b{0}_fpca2_med'.format(i)]  # - 100
+        output_zonal_stats['b{0}_fpca2_p25'.format(i)] = output_zonal_stats['b{0}_fpca2_p25'.format(i)]  # - 100
+        output_zonal_stats['b{0}_fpca2_p50'.format(i)] = output_zonal_stats['b{0}_fpca2_p50'.format(i)]  # - 100
+        output_zonal_stats['b{0}_fpca2_p75'.format(i)] = output_zonal_stats['b{0}_fpca2_p75'.format(i)]  # - 100
+        output_zonal_stats['b{0}_fpca2_p95'.format(i)] = output_zonal_stats['b{0}_fpca2_p95'.format(i)]  # - 100
+        output_zonal_stats['b{0}_fpca2_p99'.format(i)] = output_zonal_stats['b{0}_fpca2_p99'.format(i)]  # - 100
+        # output_zonal_stats['b{0}_fpca2_range'.format(i)] = output_zonal_stats['b{0}_fpca2_range'.format(i)] - 100
+
+    return output_zonal_stats
 
 
 def project_shapefile_gcs_wgs84_fn(albers, geo_df):
@@ -98,7 +121,7 @@ def apply_zonal_stats_fn(image_s, projected_shape_path, uid, variable, no_data):
     zone_stats_list = []
     site_id_list = []
     image_name_list = []
-    # print("Working on variabele: ", variable)
+    # print("Working on variable: ", variable)
     # print(qld_dict)
     # variable_values = qld_dict.get(variable)
 
@@ -110,7 +133,7 @@ def apply_zonal_stats_fn(image_s, projected_shape_path, uid, variable, no_data):
         affine = srci.transform
         array = srci.read(1)
 
-        array = array - 100
+        # array = array - 100
 
         with fiona.open(projected_shape_path) as src:
 
@@ -119,24 +142,39 @@ def apply_zonal_stats_fn(image_s, projected_shape_path, uid, variable, no_data):
                                     'percentile_75', 'percentile_95', 'percentile_99', 'range'], all_touched=True)
 
             # https://gis.stackexchange.com/questions/393413/rasterstats-zonal-statistics-does-not-ignore-nodata
-            print(zs)
+            print("zs: ", zs)
             # using "all_touched=True" will increase the number of pixels used to produce the stats "False" reduces
             # the number extract the image name from the opened file from the input file read in by rasterio
 
-            list_a = str(srci).rsplit('\\')
-            # print("list_a: ", list_a)
-            file_name = list_a[-1]
-            # print("file_name: ", file_name)
-            list_b = file_name.rsplit("'")
-            file_name_final = list_b[0]
-            img_date = file_name_final[1:9]
+            path_, im_name = os.path.split(image_s)
+            print("path_: ", path_)
+            print("im_name: ", im_name)
+
+            image_name_split = im_name.split("_")
+
+            if str(image_name_split[-2]).startswith("m"):
+                print("seasonal")
+                im_date = image_name_split[-2]
+            else:
+                print("single date")
+                im_date = image_name_split[-2]
+
+            print("im_date: ", im_date)
+
+            # list_a = str(srci).rsplit('\\')
+            # # print("list_a: ", list_a)
+            # file_name = list_a[-1]
+            # # print("file_name: ", file_name)
+            # list_b = file_name.rsplit("'")
+            # file_name_final = list_b[0]
+            # img_date = file_name_final[1:9]
 
             for zone in zs:
                 zone_stats = zone
                 count = zone_stats["count"]
-                mean = zone_stats["mean"]
                 minimum = zone_stats["min"]
                 maximum = zone_stats['max']
+                mean = zone_stats["mean"]
                 med = zone_stats['median']
                 std = zone_stats['std']
                 percentile_25 = zone_stats["percentile_25"]
@@ -147,8 +185,9 @@ def apply_zonal_stats_fn(image_s, projected_shape_path, uid, variable, no_data):
                 range_ = zone_stats['range']
 
                 # put the individual results in a list and append them to the zone_stats list
-                result = [mean, std, med, minimum, maximum, count, percentile_25, percentile_50,
-                          percentile_75, percentile_95, percentile_99, range_]
+                result = [minimum, maximum, mean, count, std, med, range_, percentile_25, percentile_50,
+                          percentile_75, percentile_95, percentile_99, ]
+
                 zone_stats_list.append(result)
 
             # extract out the site number for the polygon
@@ -159,10 +198,10 @@ def apply_zonal_stats_fn(image_s, projected_shape_path, uid, variable, no_data):
                     uid]  # reads in the id field from the attribute table and prints out the selected record
                 site = table_attributes['site_name']
 
-                details = [ident, site, img_date]
+                details = [ident, site, im_date]
 
                 site_id_list.append(details)
-                image_used = [file_name_final]
+                image_used = [im_name]
                 image_name_list.append(image_used)
 
         # join the elements in each of the lists row by row
@@ -176,7 +215,75 @@ def apply_zonal_stats_fn(image_s, projected_shape_path, uid, variable, no_data):
     return final_results
 
 
-def clean_data_frame_fn(output_list, output_dir, var_):
+def time_stamp_fn(output_zonal_stats):
+    """Insert a timestamp into feature position 4, convert timestamp into year, month and day strings and append to
+    dataframe.
+
+    @param output_zonal_stats: dataframe object containing the Landsat tile Fractional Cover zonal stats
+    @return output_zonal_stats: processed dataframe object containing the Landsat tile Fractional Cover zonal stats and
+    updated features.
+    """
+
+    s_year_ = []
+    s_month_ = []
+    s_day_ = []
+    s_date_ = []
+    e_year_ = []
+    e_month_ = []
+    e_day_ = []
+    e_date_ = []
+
+    import calendar
+    print("init time stamp")
+    # Convert the date to a time stamp
+    for n in output_zonal_stats.date:
+        print("n: ", n)
+        i = n[1:]
+        print(i)
+        s_year = i[:4]
+        s_month = i[4:6]
+        s_day = "01"
+        s_date = str(s_year) + str(s_month) + str(s_day)
+
+        s_year_.append(s_year)
+        s_month_.append(s_month)
+        s_day_.append(s_day)
+        s_date_.append(s_date)
+
+        e_year = i[6:10]
+        e_month = i[10:12]
+        m, d = calendar.monthrange(int(e_year), int(e_month))
+        e_day = str(d)
+        if len(e_day) < 1:
+            d_ = "0" + str(d)
+        else:
+            d_ = str(d)
+
+        e_date = str(e_year) + str(e_month) + str(d_)
+
+        e_year_.append(e_year)
+        e_month_.append(e_month)
+        e_day_.append(e_day)
+        e_date_.append(e_date)
+
+    output_zonal_stats.insert(4, 'e_date', e_date_)
+    output_zonal_stats.insert(4, 'e_year', e_year_)
+    output_zonal_stats.insert(4, 'e_month', e_month_)
+    output_zonal_stats.insert(4, 'e_day', e_day_)
+
+    output_zonal_stats.insert(4, 's_date', s_date_)
+    output_zonal_stats.insert(4, 's_year', s_year_)
+    output_zonal_stats.insert(4, 's_month', s_month_)
+    output_zonal_stats.insert(4, 's_day', s_day_)
+
+    pd.to_datetime(output_zonal_stats.s_date, format='%Y%m%d')
+
+    pd.to_datetime(output_zonal_stats.e_date, format='%Y%m%d')
+
+    return output_zonal_stats
+
+
+def clean_data_frame_fn(output_list, output_dir, var_, band):
     """ Create dataframe from output list, clean and export dataframe to a csv to export directory/max_temp sub-directory.
 
     @param output_list: list object created by appending the final results list elements.
@@ -186,20 +293,52 @@ def clean_data_frame_fn(output_list, output_dir, var_):
     based on the current Landsat tile.
     """
 
-    # convert the list to a pandas dataframe with a headers
-    headers = ['ident', 'site', 'im_date', var_ + '_mean', var_ + '_std', var_ + '_med', var_ + '_min',
-               var_ + '_max', var_ + '_count', var_ + "_p25", var_ + "_p50", var_ + "_p75", var_ + "_p95",
-               var_ + "_p99", var_ + "_rng", 'im_name']
+    headers = ["uid",
+               'site',
+               'date',
+               "b" + str(band) + '_fpca2_min',
+               "b" + str(band) + '_fpca2_max',
+               "b" + str(band) + '_fpca2_mean',
+               "b" + str(band) + '_fpca2_count',
+               "b" + str(band) + '_fpca2_std',
+               "b" + str(band) + '_fpca2_med',
+               "b" + str(band) + '_fpca2_range',
+               "b" + str(band) + '_fpca2_p25',
+               "b" + str(band) + '_fpca2_p50',
+               "b" + str(band) + '_fpca2_p75',
+               "b" + str(band) + '_fpca2_p95',
+               "b" + str(band) + '_fpca2_p99',
+               'image']
 
-    output_max_temp = pd.DataFrame.from_records(output_list, columns=headers)
+    output = pd.DataFrame.from_records(output_list)
+    output.to_csv(r"Z:\Scratch\Rob\test.csv")
+    for i in output.columns:
+        print(i)
+
+    print(output)
+
+    output = pd.DataFrame.from_records(output_list, columns=headers)
     # print('output_max_temp: ', output_max_temp)
 
-    site = output_max_temp['site'].unique()
+    print("output: ", output.columns)
+    # Convert the date to a time stamp
+    output = time_stamp_fn(output)
+
+    # remove 100 from zone_stats
+    output = landsat_correction_fn(output, [band])
+
+    print("output2: ", output.columns)
+    output = output[['uid', 'site', 'image', 's_day', 's_month', 's_year', 's_date', 'e_day', 'e_month', 'e_year',
+                     'e_date', 'b1_fpca2_count', 'b1_fpca2_min', 'b1_fpca2_max',
+                     'b1_fpca2_mean', 'b1_fpca2_med', 'b1_fpca2_std', 'b1_fpca2_p25', 'b1_fpca2_p50', 'b1_fpca2_p75',
+                     'b1_fpca2_p95', 'b1_fpca2_p99', 'b1_fpca2_range']]
+
+    site = output['site'].unique()
 
     print("length of site list: ", len(site))
     if len(site) >= 1:
         for i in site:
-            out_df = output_max_temp[output_max_temp['site'] == i]
+            out_df = output[output['site'] == i]
 
             out_path = os.path.join(output_dir, "{0}_{1}_zonal_stats.csv".format(
                 str(i), var_))
@@ -211,9 +350,9 @@ def clean_data_frame_fn(output_list, output_dir, var_):
         out_path = os.path.join(output_dir, "{0}_{1}_zonal_stats.csv".format(
             str(site), var_))
         # export the pandas df to a csv file
-        output_max_temp.to_csv(out_path, index=False)
+        output.to_csv(out_path, index=False)
 
-    return output_max_temp
+    return output
 
 
 def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_data):
@@ -222,12 +361,14 @@ def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_
 
     export_dir_path, zonal_stats_ready_dir, fpc_output_zonal_stats, fpc_complete_tile, i, csv_file, temp_dir_path, qld_dict"""
 
-    print("Mosaic DJA zonal stats beginning.........")
-    print("no_data: ", no_data, " - should be 0")
+    print("Mosaic fpca2 zonal stats beginning.........")
+    print("no_data: ", no_data)
 
     uid = 'uid'
     output_list = []
     print("variable: ", variable)
+
+    band = 1
 
     albers_dir = os.path.join(temp_dir_path, "albers")
 
@@ -257,7 +398,7 @@ def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_
                 output_list.append(i)
 
     # call the clean_data_frame_fn function
-    clean_output_temp = clean_data_frame_fn(output_list, output_dir, variable)
+    clean_output_temp = clean_data_frame_fn(output_list, output_dir, variable, band)
 
     return projected_shape_path
 

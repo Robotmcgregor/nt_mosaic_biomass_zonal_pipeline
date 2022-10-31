@@ -395,7 +395,7 @@ def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_
     print(output_zonal_stats)
 
     # -------------------------------------------------- Clean dataframe -----------------------------------------------
-    output_zonal_stats.to_csv(r"Z:\Scratch\Zonal_Stats_Pipeline\non_rmb_fractional_cover_zonal_stats\output_zonal_stats2.csv")
+    #output_zonal_stats.to_csv(r"Z:\Scratch\Zonal_Stats_Pipeline\non_rmb_fractional_cover_zonal_stats\output_zonal_stats2.csv")
     # Convert the date to a time stamp
     #time_stamp_fn(output_zonal_stats)
 
