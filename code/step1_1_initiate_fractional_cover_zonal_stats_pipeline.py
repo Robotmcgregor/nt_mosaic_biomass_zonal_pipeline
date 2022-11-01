@@ -62,45 +62,22 @@ SOFTWARE.
 Command arguments:
 ------------------
 
---tile_grid: str
-string object containing the path to the Landsat tile grid shapefile.
+ - tile_grid
+    - String object containing the path to the Landsat tile grid shapefile.
 
---directory_odk: str
-string object containing the path to the directory housing the odk files to be processed - the directory can contain 1
-to infinity odk outputs.
-Note: output runtime is approximately 1 hour using the remote desktop or approximately  3 hours using your laptop
-(800 FractionalCover images).
+ - data:
+    - String object containing the file path to the agb biomass csv created from biomass_field_data_clean_v4.ipynb notebook.
+Refer to previous section for csv feature requirements.
 
---export_dir: str
-string object containing the location of the destination output folder and contents(i.e. 'C:Desktop/odk/YEAR')
-NOTE1: the script will search for a duplicate folder and delete it if found.
-NOTE2: the folder created is titled (YYYYMMDD_TIME) to avoid the accidental deletion of data due to poor naming
-conventions.
+ - export_dir:
+    - String object containing the path to a directory. An export directory tree will be created here, with all outputs
+exported here.
 
---image_count
-integer object that contains the minimum number of Landsat images (per tile) required for the fractional cover
-zonal stats -- default value set to 800.
+ - mosaic_dir
+    - String object containing the path to the Landsat seasonal mosaic directory (default value is r'Z:\Landsat\mosaic').
+   Note: deviation from this structure fill cause the pipeline to fail; however, path changes can be easily made on
+   step1_1_initiate_fractional_cover_zonal_stats_pipeline.py
 
---landsat_dir: str
-string object containing the path to the Landsat Directory -- default value set to r'Z:\Landsat\wrs2'.
-
---no_data: int
-ineger object containing the Landsat Fractional Cover no data value -- default set to 0.
-
---rainfall_dir: str
-string object containing the pathway to the rainfall image directory -- default set to r'Z:\Scratch\mcintyred\Rainfall'.
-
---search_criteria1: str
-string object containing the end part of the filename search criteria for the Fractional Cover Landsat images.
--- default set to 'dilm2_zstdmask.img'
-
---search_criteria2: str
-string object from the concatenation of the end part of the filename search criteria for the Fractional Cover
-Landsat images. -- default set to 'dilm3_zstdmask.img'
-
---search_criteria3: str
-string object from the concatenation of the end part of the filename search criteria for the QLD Rainfall images.
--- default set to '.img'
 
 ======================================================================================================
 
@@ -313,8 +290,7 @@ def main_routine():
     data = cmd_args.data
     export_dir = cmd_args.export_dir
     mosaics_dir = cmd_args.mosaics_dir
-    # no_data = int(cmd_args.no_data)
-    #image_count = int(cmd_args.image_count)
+
 
     # call the temporaryDir function.
     temp_dir_path, final_user = temporary_dir_fn()
@@ -331,7 +307,6 @@ def main_routine():
 
     geo_df2.reset_index(drop=True, inplace=True)
     geo_df2['uid'] = geo_df2.index + 1
-    #geo_df2.to_file(os.path.join(export_dir_path, "biomass_1ha.shp"))
 
     shapefile_path = os.path.join(export_dir_path, "biomass_1ha_all_sites.shp")
     geo_df2.to_file(os.path.join(shapefile_path),

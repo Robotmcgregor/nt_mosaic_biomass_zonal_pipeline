@@ -1,7 +1,14 @@
     
-## NT Mosaic Biomass Zonal Pipeline
+# NT Mosaic Biomass Zonal Pipeline
 
-Pipeline Description: This pipeline creates a 1ha plot from biomass extent point data and extracts zonal statistics from the following Landsat mosaics:
+Pipeline Description: Description: This pipeline comprises of 11 scripts which read in the AGB biomass csv. Pipeline 
+converts data to  geo-dataframe and created a 1ha polygon (site) for each point. Once this is complete the pipeline 
+runs zonal statistics on the current Landsat mosaic and exports a csv per site into an outputs directory. 
+
+Note, seasonal composites can be 6 band, 3 band, greyscale and classified.
+Once pipeline is complete a temporary directory which was created will be deleted from the working drive, 
+if script fails the temporary directory requires manual deletion.
+
 
 | File Name | Season | Definition | Band Comp | Data Type | 
 | :---:  | :---:  | :---: | :---: | :---: |
@@ -13,7 +20,6 @@ Pipeline Description: This pipeline creates a 1ha plot from biomass extent point
 | dja |  Seasonal | QLD Persistent Green  | Greyscale | Continuous|
 | dka |  Seasonal |  Fractional Cover v3 | 3 band | Discrete (percentage)|
 | stc |  Annual | Vegetation Class | Greyscale |Ordinal (1-17)|
-
 
 
 ## Outputs
