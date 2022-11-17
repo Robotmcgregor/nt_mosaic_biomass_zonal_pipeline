@@ -166,5 +166,10 @@ $RECYCLE.BIN/
 *.sbn
 *.qpj
 
+# Images and outputs
+*.tif
+*.TIF
+*.img
+*.IMG
 
 
