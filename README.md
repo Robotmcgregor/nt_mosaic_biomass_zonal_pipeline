@@ -5,7 +5,7 @@ Pipeline Description: Description: This pipeline comprises of 11 scripts which r
 converts data to  geo-dataframe and created a 1ha polygon (site) for each point. Once this is complete the pipeline 
 runs zonal statistics on the current Landsat mosaic and exports a csv per site into an outputs directory. 
 
-Note, seasonal composites can be 6 band, 3 band, greyscale and classified.
+**Note:** Seasonal composites can be 6 band, 3 band, greyscale and classified.
 Once pipeline is complete a temporary directory which was created will be deleted from the working drive, 
 if script fails the temporary directory requires manual deletion.
 
@@ -23,10 +23,10 @@ if script fails the temporary directory requires manual deletion.
 
 
 ## Outputs
-- Output 1: Zonal statistic csv for each site per Landsat file type if situated with mosaic boundary.
-- Output 2: GDA94 point shapefile.
-- Output 2: GDA94 1ha polygon shapefile.
-- Output 2: Australian Albers 1ha polygon 1ha shapefile.
+- **Output 1**: Zonal statistic csv for each site per Landsat file type if situated with mosaic boundary.
+- **Output 2**: GDA94 point shapefile.
+- **Output 2**: GDA94 1ha polygon shapefile.
+- **Output 2**: Australian Albers 1ha polygon 1ha shapefile.
 
 ## Parameters
 
@@ -38,7 +38,7 @@ input csv - point data in geographics GDA94 with the following features:
 
 Landsat mosaic directory:
 located here: Z:\Landsat\mosaics
-note: script requires the current directory structure, any change to structure can be updated on the initiation script
+**Note**: script requires the current directory structure, any change to structure can be updated on the initiation script
 - step1_1_initiate_fractional_cover_zonal_stats_pipeline.py
 
 
@@ -46,29 +46,19 @@ note: script requires the current directory structure, any change to structure c
 Command arguments:
 ------------------
 
- - tile_grid
+ - **tile_grid**
     - String object containing the path to the Landsat tile grid shapefile.
 
- - data:
+ - **data**:
     - String object containing the file path to the agb biomass csv created from biomass_field_data_clean_v4.ipynb notebook. 
 Refer to previous section for csv feature requirements.
 
- - export_dir:
+ - **export_dir**:
     - String object containing the path to a directory. An export directory tree will be created here, with all outputs 
 exported here.
-   
-[comment]: <> ( - image_count)
-
-[comment]: <> (    - Integer object that contains the minimum number of Landsat images &#40;per file type&#41; required for zonal stats to run )
-
-[comment]: <> (&#40;default value is 5&#41;.)
       
- - mosaic_dir
+ - **mosaic_dir**:
     - String object containing the path to the Landsat seasonal mosaic directory (default value is r'Z:\Landsat\mosaic').
    Note: deviation from this structure fill cause the pipeline to fail; however, path changes can be easily made on 
    step1_1_initiate_fractional_cover_zonal_stats_pipeline.py
-
-[comment]: <> ( - no_data)
-
-[comment]: <> (    - Integer object containing the data no data value -- default set to 0.)
 
