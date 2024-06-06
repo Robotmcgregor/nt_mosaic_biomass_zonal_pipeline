@@ -301,33 +301,44 @@ def clean_data_frame_fn(output_list, output_dir, var_):
     """
 
     # convert the list to a pandas dataframe with a headers
-    headers = ['ident', 'site', 'im_date', var_ + '_mean', var_ + '_std', var_ + '_med', var_ + '_min',
+    headers = ['uid', 'site', 'im_date', var_ + '_mean', var_ + '_std', var_ + '_med', var_ + '_min',
                var_ + '_max', var_ + '_count', var_ + "_p25", var_ + "_p50", var_ + "_p75", var_ + "_p95",
                var_ + "_p99", var_ + "_rng", 'im_name']
 
-    output_max_temp = pd.DataFrame.from_records(output_list, columns=headers)
+    output = pd.DataFrame.from_records(output_list, columns=headers)
     # print('output_max_temp: ', output_max_temp)
 
-    site = output_max_temp['site'].unique()
+    # uid = output_max_temp['uid'].unique()
+    #
+    # print("length of uid list: ", len(uid))
+    # if len(uid) >= 1:
+    #     for i in uid:
+    #         out_df = output_max_temp[output_max_temp['uid'] == i]
+    #
+    #         out_path = os.path.join(output_dir, "{0}_{1}_zonal_stats.csv".format(
+    #             str(i), var_))
+    #         # export the pandas df to a csv file
+    #         out_df.to_csv(out_path, index=False)
+
+    site = output['site'].unique()
 
     print("length of site list: ", len(site))
     if len(site) >= 1:
         for i in site:
-            out_df = output_max_temp[output_max_temp['site'] == i]
+            out_df = output[output['site'] == i]
 
             out_path = os.path.join(output_dir, "{0}_{1}_zonal_stats.csv".format(
                 str(i), var_))
             # export the pandas df to a csv file
             out_df.to_csv(out_path, index=False)
 
-
     else:
         out_path = os.path.join(output_dir, "{0}_{1}_zonal_stats.csv".format(
             str(site), var_))
         # export the pandas df to a csv file
-        output_max_temp.to_csv(out_path, index=False)
+        output.to_csv(out_path, index=False)
 
-    return output_max_temp
+    return output
 
 
 def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_data):
@@ -394,6 +405,26 @@ def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_
          'band', 'count', 'min', 'max', 'mean', 'sum', 'std', 'median', 'majority', 'minority',
          'one', 'two', 'three', 'four', 'five',
          'six', 'seven', 'eight', 'nine', 'ten']]
+
+    # uid_list = output_zonal_stats.uid.unique().tolist()
+    # print("length of uid list: ", len(uid_list))
+    # if len(uid_list) >= 1:
+    #     for i in uid_list:
+    #         out_df = output_zonal_stats[output_zonal_stats['uid'] == i]
+    #
+    #         out_path = os.path.join(export_dir_path, "{0}_zonal_stats".format(variable),
+    #                                 "{0}_dis_zonal_stats.csv".format(str(i)))
+    #         print("export to: ", out_path)
+    #         # export the pandas df to a csv file
+    #         out_df.to_csv(out_path, index=False)
+    #
+    #
+    # else:
+    #     out_path = os.path.join(export_dir_path, "{0}_zonal_stats".format(variable),
+    #                             "{0}_dis_zonal_stats.csv".format(str(uid_list[0])))
+    #     print("export to: ", out_path)
+    #     # export the pandas df to a csv file
+    #     output_zonal_stats.to_csv(out_path, index=False)
 
     site_list = output_zonal_stats.site.unique().tolist()
     print("length of site list: ", len(site_list))

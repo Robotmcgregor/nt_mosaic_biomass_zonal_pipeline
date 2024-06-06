@@ -4,7 +4,7 @@
 Fractional cover zonal statistics pipeline
 ==========================================
 
-Description: This pipeline comprises of 11 scripts which read in the AGB biomass csv. Pipeline converts data to
+Description: This pipeline comprises 11 scripts which read in the AGB biomass csv. Pipeline converts data to
 geo-dataframe and created a 1ha polygon (site) for each point. Once this is complete the pipeline runs zonal statistics
 on the current Landsat mosaic and exports a csv per site into an outputs directory. Note, seasonal composites can be
 6 band, 3 band, greyscale and classified.
@@ -104,14 +104,14 @@ def get_cmd_args_fn():
 
     p.add_argument('-x', '--export_dir',
                    help='Enter the export directory for all of the final outputs.',
-                   default=r'Z:\Scratch\Zonal_Stats_Pipeline\non_rmb_fractional_cover_zonal_stats\outputs')
+                   default=r'U:\scratch\rob\pipelines\outputs')
 
     # p.add_argument('-i', '--image_count', type=int,
     #                help='Enter the minimum amount of Landsat images required per tile as an integer (i.e. 950).',
     #                default=5)
 
     p.add_argument('-l', '--mosaics_dir', help="The NT seasonal mosaics directory path",
-                   default=r"Z:\Landsat\mosaics")
+                   default=r"R:\landsat\mosaics")
 
     # p.add_argument('-n', '--no_data', help="Enter the Landsat Fractional Cover no data value (i.e. 0)",
     #                default=0)
@@ -278,7 +278,7 @@ def main_routine():
      - dis
      - dja
      - dka
-     - stc
+     - stc -d "U:\biomass\collated_agb\20230927\slats_tern_biomass.csv"
 
     Output 1: Zonal statistic csv for each sites per file type if situated with mosaic boundary.
     Output 2: GDA94 point shapefile
@@ -314,6 +314,10 @@ def main_routine():
 
     print("Exported shapefile: ", shapefile_path)
     # ----------------------------------------------------- h99 --------------------------------------------------------
+
+    print("-" * 50)
+    print("Creating lists of tiff's")
+    print("-" * 50)
 
     h99a2_dir = os.path.join(mosaics_dir, "structural_formation", "h99_mos")
     print("h99: ")
@@ -369,6 +373,12 @@ def main_routine():
     stc_export_csv = step1_2_list_of_images.main_routine(
         export_dir_path, stc_dir, 'stc', "*stc*.img")
 
+
+    print("-"*50)
+    print("Zonal stats............")
+    print("-" * 50)
+    # ------------------------------------------------------------------------------------------------------------------
+    # Zonal Stats
     # ------------------------------------------------ h99a2 -----------------------------------------------------------
 
     h99a2_zonal_stats_output = os.path.join(export_dir_path, 'h99a2_zonal_stats')
@@ -448,6 +458,7 @@ def main_routine():
 
     # ---------------------------------------------------- stc classified working --------------------------------------
 
+    print("beginning STC")
     stc_zonal_stats_output = os.path.join(export_dir_path, 'stc_zonal_stats')
     print('stc zonal_stats_output: ', stc_zonal_stats_output)
 
@@ -456,6 +467,7 @@ def main_routine():
     import step1_11_seasonal_stc_zonal_stats
     step1_11_seasonal_stc_zonal_stats.main_routine(
         export_dir_path, 'stc', stc_export_csv, temp_dir_path, geo_df2, no_data)
+
     # ---------------------------------------------------- Clean up ----------------------------------------------------
 
     shutil.rmtree(temp_dir_path)

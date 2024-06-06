@@ -262,49 +262,61 @@ def apply_zonal_stats_fn(image_s, projected_shape_path, uid, variable, no_data, 
         print("str(site_[0]): ", str(site_[0]))
         return final_results, str(site_[0])
 
-
-def clean_data_frame_fn(output_list, output_dir, var_):
-    """ Create dataframe from output list, clean and export dataframe to a csv to export directory/max_temp sub-directory.
-
-    @param output_list: list object created by appending the final results list elements.
-    @param max_temp_output_dir: string object containing the path to the export directory/max_temp sub-directory .
-    @param complete_tile: string object containing the current Landsat tile information.
-    @return output_max_temp: dataframe object containing all max_temp zonal stats based on the ODK 1ha plots created
-    based on the current Landsat tile.
-    """
-
-    # convert the list to a pandas dataframe with a headers
-    # headers = ['ident', 'site', 'im_date', var_ + '_mean', var_ + '_std', var_ + '_med', var_ + '_min',
-    #            var_ + '_max', var_ + '_count', var_ + "_p25", var_ + "_p50", var_ + "_p75", var_ + "_p95",
-    #            var_ + "_p99", var_ + "_rng", 'im_name']
-
-    headers = ['ident', 'site', 'im_date', var_ + '_min', var_ + '_max', var_ + '_mean', var_ + '_count',
-               var_ + '_std', var_ + '_med', var_ + "_p25", var_ + "_p50", var_ + "_p75", var_ + "_p95",
-               var_ + "_p99", var_ + "_rng", 'im_name']
-
-    output_max_temp = pd.DataFrame.from_records(output_list, columns=headers)
-    # print('output_max_temp: ', output_max_temp)
-
-    site = output_max_temp['site'].unique()
-
-    print("length of site list: ", len(site))
-    if len(site) >= 1:
-        for i in site:
-            out_df = output_max_temp[output_max_temp['site'] == i]
-
-            out_path = os.path.join(output_dir, "{0}_{1}_zonal_stats.csv".format(
-                str(i), var_))
-            # export the pandas df to a csv file
-            out_df.to_csv(out_path, index=False)
-
-
-    else:
-        out_path = os.path.join(output_dir, "{0}_{1}_zonal_stats.csv".format(
-            str(site), var_))
-        # export the pandas df to a csv file
-        output_max_temp.to_csv(out_path, index=False)
-
-    return output_max_temp
+#
+# def clean_data_frame_fn(output_list, output_dir, var_):
+#     """ Create dataframe from output list, clean and export dataframe to a csv to export directory/max_temp sub-directory.
+#
+#     @param output_list: list object created by appending the final results list elements.
+#     @param max_temp_output_dir: string object containing the path to the export directory/max_temp sub-directory .
+#     @param complete_tile: string object containing the current Landsat tile information.
+#     @return output_max_temp: dataframe object containing all max_temp zonal stats based on the ODK 1ha plots created
+#     based on the current Landsat tile.
+#     """
+#
+#     # convert the list to a pandas dataframe with a headers
+#     # headers = ['ident', 'site', 'im_date', var_ + '_mean', var_ + '_std', var_ + '_med', var_ + '_min',
+#     #            var_ + '_max', var_ + '_count', var_ + "_p25", var_ + "_p50", var_ + "_p75", var_ + "_p95",
+#     #            var_ + "_p99", var_ + "_rng", 'im_name']
+#
+#     headers = ['ident', 'site', 'im_date', var_ + '_min', var_ + '_max', var_ + '_mean', var_ + '_count',
+#                var_ + '_std', var_ + '_med', var_ + "_p25", var_ + "_p50", var_ + "_p75", var_ + "_p95",
+#                var_ + "_p99", var_ + "_rng", 'im_name']
+#
+#     output = pd.DataFrame.from_records(output_list, columns=headers)
+#     # print('output_max_temp: ', output_max_temp)
+#
+#     # site = output_max_temp['site'].unique()
+#     #
+#     # print("length of site list: ", len(site))
+#     # if len(site) >= 1:
+#     #     for i in site:
+#     #         out_df = output_max_temp[output_max_temp['site'] == i]
+#     #
+#     #         out_path = os.path.join(output_dir, "{0}_{1}_zonal_stats.csv".format(
+#     #             str(i), var_))
+#     #         # export the pandas df to a csv file
+#     #         out_df.to_csv(out_path, index=False)
+#
+#     site = output['site'].unique()
+#
+#     print("length of site list: ", len(site))
+#     if len(site) >= 1:
+#         for i in site:
+#             out_df = output[output['site'] == i]
+#
+#             out_path = os.path.join(output_dir, "{0}_{1}_zonal_stats.csv".format(
+#                 str(i), var_))
+#             # export the pandas df to a csv file
+#             out_df.to_csv(out_path, index=False)
+#
+#
+#     else:
+#         out_path = os.path.join(output_dir, "{0}_{1}_zonal_stats.csv".format(
+#             str(site), var_))
+#         # export the pandas df to a csv file
+#         output.to_csv(out_path, index=False)
+#
+#     return output
 
 
 def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_data):
@@ -445,11 +457,11 @@ def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_
     print("-" * 50)
     print(output_zonal_stats.shape)
     print(output_zonal_stats.columns)
-    output_zonal_stats.to_csv(
-        r"Z:\Scratch\Zonal_Stats_Pipeline\non_rmb_fractional_cover_zonal_stats\three_band_test.csv")
+    # output_zonal_stats.to_csv(
+    #     r"Z:\Scratch\Zonal_Stats_Pipeline\non_rmb_fractional_cover_zonal_stats\three_band_test.csv")
     output_zonal_stats.columns = header_all
-    output_zonal_stats.to_csv(
-        r"Z:\Scratch\Zonal_Stats_Pipeline\non_rmb_fractional_cover_zonal_stats\three_band_test2.csv")
+    # output_zonal_stats.to_csv(
+    #     r"Z:\Scratch\Zonal_Stats_Pipeline\non_rmb_fractional_cover_zonal_stats\three_band_test2.csv")
 
     # -------------------------------------------------- Clean dataframe -----------------------------------------------
     # output_zonal_stats.to_csv(r"Z:\Scratch\Rob\output_zonal_stats2.csv")
@@ -471,6 +483,27 @@ def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_
          'b3_dim_std', 'b3_dim_p25', 'b3_dim_p50', 'b3_dim_p75', 'b3_dim_p95', 'b3_dim_p99', 'b3_dim_range',
          ]]
 
+    # uid_list = output_zonal_stats.uid.unique().tolist()
+    # print("length of uid list: ", len(uid_list))
+    # if len(uid_list) >= 1:
+    #     for i in uid_list:
+    #         out_df = output_zonal_stats[output_zonal_stats['uid'] == i]
+    #
+    #         out_path = os.path.join(export_dir_path, "{0}_zonal_stats".format(variable),
+    #                                 "{0}_dim_zonal_stats.csv".format(str(i)))
+    #         print("export to: ", out_path)
+    #         # export the pandas df to a csv file
+    #         out_df.to_csv(out_path, index=False)
+    #
+    #
+    # else:
+    #     out_path = os.path.join(export_dir_path, "{0}_zonal_stats".format(variable),
+    #                             "{0}_dim_zonal_stats.csv".format(str(uid_list[0])))
+    #     print("export to: ", out_path)
+    #     # export the pandas df to a csv file
+    #     output_zonal_stats.to_csv(out_path, index=False)
+
+
     site_list = output_zonal_stats.site.unique().tolist()
     print("length of site list: ", len(site_list))
     if len(site_list) >= 1:
@@ -490,6 +523,7 @@ def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_
         print("export to: ", out_path)
         # export the pandas df to a csv file
         output_zonal_stats.to_csv(out_path, index=False)
+
 
     # ----------------------------------------------- Delete temporary files -------------------------------------------
     # remove the temp dir and single band csv files

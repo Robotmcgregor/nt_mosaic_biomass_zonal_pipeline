@@ -307,7 +307,7 @@ def clean_data_frame_fn(output_list, output_dir, var_, band):
 
 
     output = pd.DataFrame.from_records(output_list)
-    output.to_csv(r"Z:\Scratch\Rob\test.csv")
+    # output.to_csv(r"Z:\Scratch\Rob\test.csv")
     for i in output.columns:
         print(i)
 
@@ -328,6 +328,18 @@ def clean_data_frame_fn(output_list, output_dir, var_, band):
                      'e_date', 'b1_h99a2_count', 'b1_h99a2_min', 'b1_h99a2_max',
                      'b1_h99a2_mean', 'b1_h99a2_med', 'b1_h99a2_std', 'b1_h99a2_p25', 'b1_h99a2_p50', 'b1_h99a2_p75',
                      'b1_h99a2_p95','b1_h99a2_p99', 'b1_h99a2_range']]
+
+    # uid = output['uid'].unique()
+    #
+    # print("length of site list: ", len(uid))
+    # if len(uid) >= 1:
+    #     for i in uid:
+    #         out_df = output[output['uid'] == i]
+    #
+    #         out_path = os.path.join(output_dir, "{0}_{1}_zonal_stats.csv".format(
+    #             str(i), var_))
+    #         # export the pandas df to a csv file
+    #         out_df.to_csv(out_path, index=False)
 
     site = output['site'].unique()
 
@@ -395,10 +407,6 @@ def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_
 
     # call the clean_data_frame_fn function
     clean_output_temp = clean_data_frame_fn(output_list, output_dir, variable, band)
-
-
-
-
 
 
     return projected_shape_path

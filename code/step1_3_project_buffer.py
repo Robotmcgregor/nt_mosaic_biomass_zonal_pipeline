@@ -172,7 +172,9 @@ def square_buffer_fn(projected_df, prime_temp_buffer_dir, crs_name):
     @return buffer_temp_dir: string object containing the path to the final output subdirectory titled after the crs name.
     """
 
-    buffer_temp_dir = os.path.join(prime_temp_buffer_dir, 'sites_1ha' + crs_name)
+    #todo this is the 1ha issue for the site name
+    #buffer_temp_dir = os.path.join(prime_temp_buffer_dir, 'sites_1ha' + crs_name)
+    buffer_temp_dir = os.path.join(prime_temp_buffer_dir, 'sites' + crs_name)
     if not os.path.exists(buffer_temp_dir):
         os.makedirs(buffer_temp_dir)
     else:
@@ -183,6 +185,12 @@ def square_buffer_fn(projected_df, prime_temp_buffer_dir, crs_name):
         projected_df2 = projected_df.loc[projected_df.site == i]
         single_site = projected_df2.head(1)
         # print("single_site: ", single_site)
+
+        # print(projected_df)
+        # for i in projected_df.uid.unique():
+        #     projected_df2 = projected_df.loc[projected_df.uid == i]
+        #     single_site = projected_df2.head(1)
+        #     # print("single_site: ", single_site)
 
         projected_df3 = single_site.buffer(50, cap_style=3)
 
@@ -219,8 +227,10 @@ def add_site_attribute_fn(prime_temp_buffer_dir, buffer_temp_dir, crs_name):
                 # print("file ends with ", ends_with)
                 # split file name
                 list_file_variables = file.split('_')
-                # print(list_file_variables)
-                site = list_file_variables[0]
+                print(list_file_variables)
+
+
+                site = f"{list_file_variables[0]}_{list_file_variables[1]}"
 
                 shp = os.path.join(root, file)
                 geo_df = gpd.read_file(shp, driver="ESRI Shapefile")
@@ -297,15 +307,24 @@ def main_routine(data, export_dir_path, prime_temp_buffer_dir):
 
 
     df = pd.read_csv(data)
+    print("df shape: ", df.shape)
+
+    # remove underscore from site name
+    site_list = []
+    for i in df.site:
+        n = i.replace("_", "")
+        m = n[:-4] + "." + n[-4:]
+        site_list.append(m)
+    df["site"] = site_list
 
     gdf = gpd.GeoDataFrame(
         df, geometry=gpd.points_from_xy(df.lon_gda94, df.lat_gda94))
-
+    print("gdf shape: ", gdf.shape)
     #print(gdf.crs)
     gdf1 = gdf.set_crs(epsg=4283)
     #print(gdf1.crs)
 
-    geo_df2 = gdf1.drop_duplicates(subset=["site"], keep="first")
+    geo_df2 = gdf1.drop_duplicates() #subset=["site_name"], keep="first")
     #print(geo_df2.shape)
 
     geo_df2.reset_index(drop=True, inplace=True)
@@ -315,9 +334,11 @@ def main_routine(data, export_dir_path, prime_temp_buffer_dir):
 
     # Export shapefile.
     file_export = os.path.join(export_dir_path, 'allometry_biomass_output.shp')
-    # print("shapefile exported: ", file_export)
+    print("shapefile exported: ", file_export)
 
     geo_df2.to_file(file_export, driver='ESRI Shapefile')
+
+    print(geo_df2.shape)
 
     #print("shapefile exported: ", file_export)
     #print(prime_temp_buffer_dir)
@@ -384,6 +405,7 @@ def main_routine(data, export_dir_path, prime_temp_buffer_dir):
     geo_df, crs_name_albers = concatenate_df_fn(prime_temp_buffer_dir, export_dir_path, crs_name)
 
     geo_df.to_file(os.path.join(export_dir_path, "hectare_sites_{0}.shp".format(crs_name)), driver="ESRI Shapefile")
+
 
     return geo_df, crs_name
 

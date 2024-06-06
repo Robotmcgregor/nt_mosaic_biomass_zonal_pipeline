@@ -50,7 +50,7 @@ from glob import glob
 warnings.filterwarnings("ignore")
 
 
-def list_dir_fn(tree_height_dir, search_item):
+def list_dir_fn(dir_, search_item):
     """ Return a list of the rainfall raster images in a directory for the given file extension.
 
     @param rainfall_dir: string object containing the path to the directory containing the rainfall tif files
@@ -58,11 +58,11 @@ def list_dir_fn(tree_height_dir, search_item):
     the search criteria.
     """
     list_image = []
-
-    for image in glob(os.path.join(tree_height_dir, search_item)):
-        # print("tree height: ", image)
+    print("searching: ", os.path.join(dir_, search_item))
+    for image in glob(os.path.join(dir_, search_item)):
+        print("image: ", image)
         list_image.append(image)
-    # print(list_image)
+    print(list_image)
     return list_image
 
 def output_csv_fn(list_image, export_dir_path, variable):
@@ -74,18 +74,19 @@ def output_csv_fn(list_image, export_dir_path, variable):
     @return export_rainfall: string object containing the path to the populated csv.
     """
     # assumes that file_list is a flat list, it adds a new path in a new row, producing multiple observations.
-    export_rainfall = (export_dir_path + '\\{0}_image_list.csv'.format(variable))
-    with open(export_rainfall, "w") as output:
+    export_file = (export_dir_path + '\\{0}_image_list.csv'.format(variable))
+    print("export_file: ", export_file)
+    with open(export_file, "w") as output:
         writer = csv.writer(output, lineterminator='\n')
         for file in list_image:
             writer.writerow([file])
 
-    return export_rainfall
+    return export_file
 
 
 def main_routine(export_dir_path, variable_dir, variable, search_item):
 
-    print("initiate step 1 2 list of tree height images")
+    print("initiate step 1 2 list of images")
     # # os walk
     # year_dir_list = next(os.walk(variable_dir))[1]
     # #print(year_dir_list)

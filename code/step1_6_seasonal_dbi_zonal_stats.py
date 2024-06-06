@@ -501,6 +501,18 @@ def main_routine(export_dir_path, variable, csv_file, temp_dir_path, geo_df, no_
          'b6_dbi_std', 'b6_dbi_p25', 'b6_dbi_p50', 'b6_dbi_p75', 'b6_dbi_p95', 'b6_dbi_p99', 'b6_dbi_range',
          ]]
 
+    # uid_list = output_zonal_stats.uid.unique().tolist()
+    # print("length of uid list: ", len(uid_list))
+    # if len(uid_list) >= 1:
+    #     for i in uid_list:
+    #         out_df = output_zonal_stats[output_zonal_stats['uid'] == i]
+    #
+    #         out_path = os.path.join(export_dir_path, "{0}_zonal_stats".format(variable),
+    #                                 "{0}_dbi_zonal_stats.csv".format(str(i)))
+    #         print("export to: ", out_path)
+    #         # export the pandas df to a csv file
+    #         out_df.to_csv(out_path, index=False)
+
     site_list = output_zonal_stats.site.unique().tolist()
     print("length of site list: ", len(site_list))
     if len(site_list) >= 1:

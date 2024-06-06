@@ -193,7 +193,7 @@ def apply_zonal_stats_fn(image_s, projected_shape_path, uid, variable, no_data):
 
                 zone_stats_list.append(result)
 
-            # extract out the site number for the polygon
+            # extract out the uid number for the polygon
             for i in src:
                 table_attributes = i['properties']  # reads in the attribute table for each record
 
@@ -316,7 +316,7 @@ def clean_data_frame_fn(output_list, output_dir, var_, band):
 
 
     output = pd.DataFrame.from_records(output_list)
-    output.to_csv(r"Z:\Scratch\Rob\test.csv")
+    #output.to_csv(r"Z:\Scratch\Rob\test.csv")
     for i in output.columns:
         print(i)
 
@@ -338,6 +338,18 @@ def clean_data_frame_fn(output_list, output_dir, var_, band):
                      'b1_dja_mean', 'b1_dja_med', 'b1_dja_std', 'b1_dja_p25', 'b1_dja_p50', 'b1_dja_p75',
                      'b1_dja_p95','b1_dja_p99', 'b1_dja_range']]
 
+    # uid = output['uid'].unique()
+    #
+    # print("length of uid list: ", len(uid))
+    # if len(uid) >= 1:
+    #     for i in uid:
+    #         out_df = output[output['uid'] == i]
+    #
+    #         out_path = os.path.join(output_dir, "{0}_{1}_zonal_stats.csv".format(
+    #             str(i), var_))
+    #         # export the pandas df to a csv file
+    #         out_df.to_csv(out_path, index=False)
+
     site = output['site'].unique()
 
     print("length of site list: ", len(site))
@@ -349,7 +361,6 @@ def clean_data_frame_fn(output_list, output_dir, var_, band):
                 str(i), var_))
             # export the pandas df to a csv file
             out_df.to_csv(out_path, index=False)
-
 
     else:
         out_path = os.path.join(output_dir, "{0}_{1}_zonal_stats.csv".format(

@@ -311,7 +311,7 @@ def clean_data_frame_fn(output_list, output_dir, var_, band):
                'image']
 
     output = pd.DataFrame.from_records(output_list)
-    output.to_csv(r"Z:\Scratch\Rob\test.csv")
+    # output.to_csv(r"Z:\Scratch\Rob\test.csv")
     for i in output.columns:
         print(i)
 
@@ -333,6 +333,18 @@ def clean_data_frame_fn(output_list, output_dir, var_, band):
                      'b1_fpca2_mean', 'b1_fpca2_med', 'b1_fpca2_std', 'b1_fpca2_p25', 'b1_fpca2_p50', 'b1_fpca2_p75',
                      'b1_fpca2_p95', 'b1_fpca2_p99', 'b1_fpca2_range']]
 
+    # uid = output['uid'].unique()
+    #
+    # print("length of uid list: ", len(uid))
+    # if len(uid) >= 1:
+    #     for i in uid:
+    #         out_df = output[output['uid'] == i]
+    #
+    #         out_path = os.path.join(output_dir, "{0}_{1}_zonal_stats.csv".format(
+    #             str(i), var_))
+    #         # export the pandas df to a csv file
+    #         out_df.to_csv(out_path, index=False)
+
     site = output['site'].unique()
 
     print("length of site list: ", len(site))
@@ -345,10 +357,9 @@ def clean_data_frame_fn(output_list, output_dir, var_, band):
             # export the pandas df to a csv file
             out_df.to_csv(out_path, index=False)
 
-
     else:
         out_path = os.path.join(output_dir, "{0}_{1}_zonal_stats.csv".format(
-            str(site), var_))
+            str(uid), var_))
         # export the pandas df to a csv file
         output.to_csv(out_path, index=False)
 
